@@ -122,14 +122,12 @@ namespace Praktikum_W12_S2
             sqlConnect.Open();
             if (lblAvailability.Text == "Available")
             {
-                sqlQuery = "update dt_player set player_id='" + tBoxPlayerID.Text + "', player_name='" + tBoxPlayerName.Text + "', birthdate= '" + dTimeBirthdate.Value.ToString("yyyyMMdd") + "', nation= '" + cBoxNationality.Text + "', team_name = '" + cBoxTeam.Text + "', team_number= '" + dUpDownTeamNumber.Text + "' where  id_lama='" + lblIDLama.Text + "'";
-                sqlCommand = new MySqlCommand(sqlQuery, sqlConnect);
-                sqlCommand.ExecuteNonQuery();
+
                 for (int i = 0; i < dtTeam.Rows.Count; i++)
                 {
-                    if (dtPemain.Rows[PosisiSekarang][1].ToString() == dtTeam.Rows[i][1].ToString())
+                    if (dtPemain.Rows[PosisiSekarang][0].ToString() == dtTeam.Rows[i][7].ToString())
                     {
-                        sqlQuery = "update dt_team set captain_id='" + tBoxPlayerID.Text + "' where  captain_id='" + lblIDLama.Text + "'";
+                        sqlQuery = "update dt_team set captain_id= (SELECT player_id FROM dt_player WHERE birthdate = (SELECT MIN(birthdate) FROM dt_player WHERE team_name ='" + cBoxTeam.Text + "' )) where  captain_id='" + lblIDLama.Text + "'";
                         sqlCommand = new MySqlCommand(sqlQuery, sqlConnect);
                         sqlCommand.ExecuteNonQuery();
                         i = dtTeam.Rows.Count - 1;
@@ -139,6 +137,9 @@ namespace Praktikum_W12_S2
                         i++;
                     }
                 }
+                sqlQuery = "update dt_player set player_id='" + tBoxPlayerID.Text + "', player_name='" + tBoxPlayerName.Text + "', birthdate= '" + dTimeBirthdate.Value.ToString("yyyyMMdd") + "', nation= '" + cBoxNationality.Text + "', team_name = '" + cBoxTeam.Text + "', team_number= '" + dUpDownTeamNumber.Text + "' where  id_lama='" + lblIDLama.Text + "'";
+                sqlCommand = new MySqlCommand(sqlQuery, sqlConnect);
+                sqlCommand.ExecuteNonQuery();
                 MessageBox.Show("Data pemain baru dengan nama '" + tBoxPlayerName.Text + "' telah ditambahkan");
             }
             else
